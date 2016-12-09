@@ -74,3 +74,15 @@ editor:
     sha: "3782bb3*"
   parameters:
 
+---
+editor:
+  name: "jessitron.elm-rugs.SubscribeToClicks"
+  group: "jessitron"
+  artifact: "elm-rugs"
+  version: "1.0.3"
+  origin:
+    repo: "git@github.com-personal:jessitron/elm-rugs.git"
+    branch: "master"
+    sha: "3782bb3*"
+  parameters:
+

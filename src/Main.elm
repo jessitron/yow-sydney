@@ -4,6 +4,7 @@ import Html exposing (Html)
 import Html.Attributes
 import Html.Events
 import Json.Decode
+import Mouse
 
 
 diagram =
@@ -26,14 +27,14 @@ main =
 
 type alias Model =
     { labels : List Label
-    , newLabel : String
+    , newLabel : String , lastClick : Maybe Mouse.Position
     }
 
 
 init : ( Model, Cmd Msg )
 init =
     { labels = []
-    , newLabel = ""
+    , newLabel = "" , lastClick = Nothing
     }
         ! []
 
@@ -46,6 +47,7 @@ type Msg
     = Noop
     | NewLabel String
     | SaveLabel Label
+    | Click Mouse.Position
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -63,6 +65,9 @@ update msg model =
                 , newLabel = ""
             }
                 ! []
+
+        Click lastClick ->
+            { model | lastClick = Just lastClick } ! []
 
 
 
@@ -138,4 +143,4 @@ onEnter msg =
 
 
 subscriptions model =
-    Sub.none
+    Mouse.clicks Click
