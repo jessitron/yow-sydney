@@ -7,13 +7,14 @@ import Json.Decode
 
 
 diagram =
-    "elmview.png"
+    "elmprogram.png"
 
 
 main : Program Never Model Msg
 main =
-    Html.beginnerProgram
-        { model = model
+    Html.program
+        { init = init
+        , subscriptions = subscriptions
         , update = update
         , view = view
         }
@@ -29,11 +30,12 @@ type alias Model =
     }
 
 
-model : Model
-model =
-    { labels = [ { text = "Main", x = 100, y = 200 } ]
+init : ( Model, Cmd Msg )
+init =
+    { labels = []
     , newLabel = ""
     }
+        ! []
 
 
 
@@ -43,20 +45,24 @@ model =
 type Msg
     = Noop
     | NewLabel String
-    | SaveLabel
+    | SaveLabel Label
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         Noop ->
-            model
+            model ! []
 
         NewLabel string ->
-            { model | newLabel = string }
+            { model | newLabel = string } ! []
 
-        SaveLabel ->
-            model
+        SaveLabel label ->
+            { model
+                | labels = label :: model.labels
+                , newLabel = ""
+            }
+                ! []
 
 
 
@@ -104,6 +110,7 @@ newLabelInput model =
     Html.input
         [ Html.Attributes.id "newLabel"
         , Html.Events.onInput NewLabel
+        , onEnter (SaveLabel { text = model.newLabel, x = 100, y = 200 })
         , Html.Attributes.value model.newLabel
         , Html.Attributes.style
             [ ( "position", "absolute" )
@@ -125,3 +132,10 @@ onEnter msg =
     in
         Html.Events.on "keydown" (Json.Decode.map tagger Html.Events.keyCode)
 
+
+
+-- SUBSCRIPTIONS
+
+
+subscriptions model =
+    Sub.none

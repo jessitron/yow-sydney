@@ -62,3 +62,15 @@ editor:
   parameters:
     - "enter_message": "SaveLabel"
 
+---
+editor:
+  name: "jessitron.elm-rugs.UpgradeToProgram"
+  group: "jessitron"
+  artifact: "elm-rugs"
+  version: "1.0.3"
+  origin:
+    repo: "git@github.com-personal:jessitron/elm-rugs.git"
+    branch: "master"
+    sha: "3782bb3*"
+  parameters:
+
