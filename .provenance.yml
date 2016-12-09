@@ -1,0 +1,13 @@
+---
+editor:
+  name: "jessitron.elm-rugs.Organize"
+  group: "jessitron"
+  artifact: "elm-rugs"
+  version: "1.0.3"
+  origin:
+    repo: "git@github.com-personal:jessitron/elm-rugs.git"
+    branch: "master"
+    sha: "3782bb3*"
+  parameters:
+    - "project_name": "Yow"
+
