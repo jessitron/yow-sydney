@@ -5,6 +5,8 @@ import Html.Attributes
 import Html.Events
 import Json.Decode
 import Mouse
+import Dom
+import Task
 
 
 diagram =
@@ -27,14 +29,16 @@ main =
 
 type alias Model =
     { labels : List Label
-    , newLabel : String , lastClick : Maybe Mouse.Position
+    , newLabel : String
+    , lastClick : Maybe Mouse.Position
     }
 
 
 init : ( Model, Cmd Msg )
 init =
     { labels = []
-    , newLabel = "" , lastClick = Nothing
+    , newLabel = ""
+    , lastClick = Nothing
     }
         ! []
 
@@ -48,6 +52,7 @@ type Msg
     | NewLabel String
     | SaveLabel Label
     | Click Mouse.Position
+    | FocusFieldNotFound String
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -63,11 +68,18 @@ update msg model =
             { model
                 | labels = label :: model.labels
                 , newLabel = ""
+                , lastClick = Nothing
             }
                 ! []
 
         Click lastClick ->
-            { model | lastClick = Just lastClick } ! []
+            { model
+                | lastClick = Just lastClick
+            }
+                ! [ requestFocus "newLabel" ]
+
+        FocusFieldNotFound id ->
+            model ! []
 
 
 
@@ -112,18 +124,23 @@ drawLabels labels =
 
 newLabelInput : Model -> Html Msg
 newLabelInput model =
-    Html.input
-        [ Html.Attributes.id "newLabel"
-        , Html.Events.onInput NewLabel
-        , onEnter (SaveLabel { text = model.newLabel, x = 100, y = 200 })
-        , Html.Attributes.value model.newLabel
-        , Html.Attributes.style
-            [ ( "position", "absolute" )
-            , ( "top", (toString 200) ++ "px" )
-            , ( "left", (toString 100) ++ "px" )
-            ]
-        ]
-        []
+    case model.lastClick of
+        Nothing ->
+            Html.div [] []
+
+        Just { x, y } ->
+            Html.input
+                [ Html.Attributes.id "newLabel"
+                , Html.Events.onInput NewLabel
+                , onEnter (SaveLabel { text = model.newLabel, x = x, y = y })
+                , Html.Attributes.value model.newLabel
+                , Html.Attributes.style
+                    [ ( "position", "absolute" )
+                    , ( "top", (toString y) ++ "px" )
+                    , ( "left", (toString x) ++ "px" )
+                    ]
+                ]
+                []
 
 
 onEnter : Msg -> Html.Attribute Msg
@@ -144,3 +161,16 @@ onEnter msg =
 
 subscriptions model =
     Mouse.clicks Click
+
+
+requestFocus field_id =
+    let
+        handle result =
+            case result of
+                Ok () ->
+                    Noop
+
+                Err (Dom.NotFound id) ->
+                    FocusFieldNotFound id
+    in
+        Task.attempt handle (Dom.focus field_id)
