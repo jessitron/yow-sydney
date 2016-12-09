@@ -3,6 +3,7 @@ module Main exposing (main)
 import Html exposing (Html)
 import Html.Attributes
 import Html.Events
+import Json.Decode
 
 
 diagram =
@@ -42,6 +43,7 @@ model =
 type Msg
     = Noop
     | NewLabel String
+    | SaveLabel
 
 
 update : Msg -> Model -> Model
@@ -52,6 +54,9 @@ update msg model =
 
         NewLabel string ->
             { model | newLabel = string }
+
+        SaveLabel ->
+            model
 
 
 
@@ -107,3 +112,16 @@ newLabelInput model =
             ]
         ]
         []
+
+
+onEnter : Msg -> Html.Attribute Msg
+onEnter msg =
+    let
+        tagger code =
+            if code == 13 then
+                msg
+            else
+                Noop
+    in
+        Html.Events.on "keydown" (Json.Decode.map tagger Html.Events.keyCode)
+
