@@ -23,12 +23,16 @@ main =
 
 
 type alias Model =
-    { labels : List Label , newLabel : String }
+    { labels : List Label
+    , newLabel : String
+    }
 
 
 model : Model
 model =
-    { labels = [ { text = "Main", x = 100, y = 200 } ] , newLabel = "" }
+    { labels = [ { text = "Main", x = 100, y = 200 } ]
+    , newLabel = ""
+    }
 
 
 
@@ -66,6 +70,7 @@ view model =
             ]
             []
         , drawLabels model.labels
+        , newLabelInput model
         ]
 
 
@@ -95,6 +100,10 @@ newLabelInput model =
         [ Html.Attributes.id "newLabel"
         , Html.Events.onInput NewLabel
         , Html.Attributes.value model.newLabel
+        , Html.Attributes.style
+            [ ( "position", "absolute" )
+            , ( "top", (toString 200) ++ "px" )
+            , ( "left", (toString 100) ++ "px" )
+            ]
         ]
         []
-
