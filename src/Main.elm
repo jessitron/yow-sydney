@@ -1,6 +1,7 @@
 module Main exposing (main)
 
 import Html
+import Html.Attributes
 
 
 diagram =
